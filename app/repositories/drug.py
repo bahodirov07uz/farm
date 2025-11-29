@@ -17,9 +17,11 @@ class DrugRepository(BaseRepository):
         name: str,
         code: str,
         description: str | None,
+        price: float,
+        images: list[str] | None = None,
         is_active: bool,
     ) -> Drug:
-        drug = Drug(name=name, code=code, description=description, is_active=is_active)
+        drug = Drug(name=name, code=code, description=description, price=price, images=images, is_active=is_active)
         self.session.add(drug)
         await self.session.flush()
         await self.session.refresh(drug)
@@ -41,5 +43,14 @@ class DrugRepository(BaseRepository):
             )
         result = await self.session.execute(stmt.order_by(Drug.name))
         return result.scalars().all()
+
+    async def get_variant_by_id(self, variant_id: int):
+        from app.models import DrugVariant
+        stmt = select(DrugVariant).where(DrugVariant.id == variant_id)
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()
+
+
+
 
 

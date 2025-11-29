@@ -27,3 +27,13 @@ async def lifespan_redis() -> AsyncIterator[None]:
         _redis_client = None
 
 
+
+
+
+
+
+
+
+
+
+

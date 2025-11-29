@@ -56,3 +56,13 @@ class UserRepository(BaseRepository):
         return result.scalar_one_or_none()
 
 
+
+
+
+
+
+
+
+
+
+

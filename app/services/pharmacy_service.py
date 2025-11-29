@@ -67,4 +67,15 @@ class PharmacyService:
         await self.session.refresh(request)
         return request
 
+    async def list_all_pharmacies(self) -> list[Pharmacy]:
+        pharmacies = await self.pharmacy_repo.list_all()
+        return list(pharmacies)
+
+
+
+
+
+
+
+
 

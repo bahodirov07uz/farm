@@ -8,7 +8,7 @@ from app.models.mixins import TimestampMixin
 class Inventory(TimestampMixin, Base):
     __tablename__ = "inventories"
     __table_args__ = (
-        UniqueConstraint("branch_id", "drug_id", name="uq_inventory_branch_drug"),
+        UniqueConstraint("branch_id", "drug_variant_id", name="uq_inventory_branch_variant"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -18,10 +18,21 @@ class Inventory(TimestampMixin, Base):
     drug_id: Mapped[int] = mapped_column(
         ForeignKey("drugs.id", ondelete="CASCADE"), nullable=False
     )
+    drug_variant_id: Mapped[int | None] = mapped_column(
+        ForeignKey("drug_variants.id", ondelete="CASCADE"), nullable=True
+    )
     quantity: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     reorder_level: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
     branch = relationship("Branch", back_populates="inventories")
     drug = relationship("Drug", back_populates="inventories")
+    drug_variant = relationship("DrugVariant", back_populates="inventories")
+
+
+
+
+
+
+
 
 

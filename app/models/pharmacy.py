@@ -19,3 +19,13 @@ class Pharmacy(TimestampMixin, Base):
     users = relationship("User", back_populates="pharmacy")
 
 
+
+
+
+
+
+
+
+
+
+

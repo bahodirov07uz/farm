@@ -7,6 +7,8 @@ class DrugBase(BaseSchema):
     name: str
     code: str
     description: str | None = None
+    price: float = 0.0
+    images: list[str] | None = None
     is_active: bool = True
 
 
@@ -18,5 +20,8 @@ class DrugRead(DrugBase):
     id: int
     created_at: datetime
     updated_at: datetime
+
+
+
 
 

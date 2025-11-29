@@ -21,8 +21,19 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
     async with AsyncSessionLocal() as session:
         yield session
 
+# app/db.py
 
 def init_models() -> None:
     """Used by Alembic for autogenerate to ensure models are imported."""
-    _ = Base.metadata
+    # Import all models for Alembic
+    from app.models.pharmacy import Pharmacy
+    from app.models.user import User
+    from app.models.drug import Drug
+    from app.models.drug_variant import DrugVariant
+    from app.models.inventory import Inventory
+    from app.models.orders import Order, OrderItem
+    from app.models.branch import Branch
+    from app.models.audit_log import AuditLog
+    from app.models.pharmacy_request import PharmacyRegistrationRequest
 
+    _ = Base.metadata  # Alembic Base.metadata uchun

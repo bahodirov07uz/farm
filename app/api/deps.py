@@ -14,7 +14,7 @@ from app.services.branch_service import BranchService
 from app.services.drug_service import DrugService
 from app.services.inventory_service import InventoryService
 from app.services.pharmacy_service import PharmacyService
-
+from app.services.orders import OrderService
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.api_v1_prefix}/auth/login")
 
 
@@ -27,6 +27,8 @@ async def get_user_repository(
     session: AsyncSession = Depends(get_db_session),
 ) -> UserRepository:
     return UserRepository(session)
+
+
 
 
 async def get_current_user(
@@ -55,6 +57,31 @@ async def get_current_user(
         raise credentials_exception
     return user
 
+async def get_current_cashier(
+    current_user: User = Depends(get_current_user)
+) -> User:
+    """
+    Verify current user is a cashier or superadmin/operator
+    """
+    if current_user.role not in [UserRole.CASHIER, UserRole.SUPERADMIN, UserRole.OPERATOR]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only cashiers can access this endpoint"
+        )
+    return current_user
+
+async def get_current_admin(
+    current_user: User = Depends(get_current_user)
+) -> User:
+    """
+    Verify current user is a superadmin or operator
+    """
+    if current_user.role not in [UserRole.SUPERADMIN, UserRole.OPERATOR]:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only admins can access this endpoint"
+        )
+    return current_user
 
 def require_roles(*allowed_roles: Iterable[UserRole] | UserRole):
     flattened_roles: set[UserRole] = set()
@@ -86,7 +113,7 @@ allow_pharmacy_admin = require_roles(UserRole.PHARMACY_ADMIN)
 allow_branch_admin = require_roles(UserRole.BRANCH_ADMIN)
 allow_cashier = require_roles(UserRole.CASHIER)
 allow_branch_admin_or_cashier = require_roles({UserRole.BRANCH_ADMIN, UserRole.CASHIER})
-
+allow_all_users = require_roles(UserRole.USER,UserRole.BRANCH_ADMIN,UserRole.PHARMACY_ADMIN,UserRole.SUPERADMIN,UserRole.CASHIER,UserRole.OPERATOR)
 
 async def get_auth_service(session: AsyncSession = Depends(get_db_session)) -> AuthService:
     return AuthService(session)
@@ -107,3 +134,14 @@ async def get_drug_service(session: AsyncSession = Depends(get_db_session)) -> D
 async def get_inventory_service(session: AsyncSession = Depends(get_db_session)) -> InventoryService:
     return InventoryService(session)
 
+async def get_order_service(
+    session: AsyncSession = Depends(get_db_session)
+) -> OrderService:
+    return OrderService(session)
+
+
+async def get_drug_variant_service(
+    session: AsyncSession = Depends(get_db_session)
+) -> "DrugVariantService":
+    from app.services.drug_variant_service import DrugVariantService
+    return DrugVariantService(session)

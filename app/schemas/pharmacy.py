@@ -19,3 +19,13 @@ class PharmacyRead(PharmacyBase):
     updated_at: datetime
 
 
+
+
+
+
+
+
+
+
+
+

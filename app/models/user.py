@@ -5,6 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
 from app.models.mixins import TimestampMixin
+from typing import List
 
 
 class UserRole(str, enum.Enum):
@@ -33,6 +34,9 @@ class User(TimestampMixin, Base):
     )
     branch_id: Mapped[int | None] = mapped_column(
         ForeignKey("branches.id", ondelete="SET NULL"), nullable=True
+    )
+    orders: Mapped[List["Order"]] = relationship(
+        "Order", back_populates="user"
     )
 
     pharmacy = relationship("Pharmacy", back_populates="users")

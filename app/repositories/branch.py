@@ -42,6 +42,8 @@ class BranchRepository(BaseRepository):
         name: str | None = None,
         address: str | None = None,
         phone: str | None = None,
+        longitude: str | None = None,
+        latitude: str | None = None,
     ) -> Branch:
         if name is not None:
             branch.name = name
@@ -49,11 +51,28 @@ class BranchRepository(BaseRepository):
             branch.address = address
         if phone is not None:
             branch.phone = phone
-        await self.session.flush()
+        if longitude is not None:
+            branch.longitude = longitude
+
+        if latitude is not None:
+            branch.latitude = latitude
+        await self.session.commit()
         await self.session.refresh(branch)
         return branch
 
     async def delete(self, branch: Branch) -> None:
         await self.session.delete(branch)
+
+    async def list_all(self) -> list[Branch]:
+        stmt = select(Branch).order_by(Branch.name)
+        result = await self.session.execute(stmt)
+        return list(result.scalars().all())
+
+
+
+
+
+
+
 
 

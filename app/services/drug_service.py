@@ -9,8 +9,19 @@ class DrugService:
         self.session = session
         self.drug_repo = DrugRepository(session)
 
-    async def create_drug(self, *, name: str, code: str, description: str | None, is_active: bool) -> Drug:
-        drug = await self.drug_repo.create(name=name, code=code, description=description, is_active=is_active)
+    async def create_drug(
+        self,
+        *,
+        name: str,
+        code: str,
+        description: str | None,
+        price: float,
+        images: list[str] | None = None,
+        is_active: bool,
+    ) -> Drug:
+        drug = await self.drug_repo.create(
+            name=name, code=code, description=description, price=price, images=images, is_active=is_active
+        )
         await self.session.commit()
         await self.session.refresh(drug)
         return drug
@@ -21,5 +32,8 @@ class DrugService:
 
     async def get_drug(self, drug_id: int) -> Drug | None:
         return await self.drug_repo.get_by_id(drug_id)
+
+
+
 
 

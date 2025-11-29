@@ -25,3 +25,13 @@ class UserRead(UserBase):
     updated_at: datetime
 
 
+
+
+
+
+
+
+
+
+
+

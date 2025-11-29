@@ -3,10 +3,9 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import api_router
+from .api import api_router
 from app.core.cache import lifespan_redis
 from app.core.config import settings
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):  # noqa: ARG001

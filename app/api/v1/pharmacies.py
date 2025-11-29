@@ -52,3 +52,19 @@ async def reject_request(
     return await service.reject_request(request_id, reason=payload.reason)
 
 
+@router.get("", response_model=list[PharmacyRead])
+async def list_all_pharmacies(
+    service: PharmacyService = Depends(deps.get_pharmacy_service),
+    _: User = Depends(deps.allow_all_users),
+):
+    """Get all pharmacies (only for operators/superadmins)"""
+    return await service.list_all_pharmacies()
+
+
+
+
+
+
+
+
+

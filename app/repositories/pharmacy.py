@@ -21,6 +21,11 @@ class PharmacyRepository(BaseRepository):
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
 
+    async def list_all(self) -> list[Pharmacy]:
+        stmt = select(Pharmacy).order_by(Pharmacy.name)
+        result = await self.session.execute(stmt)
+        return list(result.scalars().all())
+
 
 class PharmacyRequestRepository(BaseRepository):
     def __init__(self, session: AsyncSession) -> None:
@@ -68,5 +73,12 @@ class PharmacyRequestRepository(BaseRepository):
         await self.session.flush()
         await self.session.refresh(request)
         return request
+
+
+
+
+
+
+
 
 

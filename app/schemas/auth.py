@@ -1,19 +1,19 @@
 from datetime import datetime
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 from app.schemas import BaseSchema
 
 
 class RegisterRequest(BaseSchema):
     email: EmailStr
-    password: str
+    password: str = Field(..., min_length=6, description="Password must be at least 6 characters")
     full_name: str | None = None
 
 
 class LoginRequest(BaseSchema):
     email: EmailStr
-    password: str
+    password: str = Field(..., min_length=1, description="Password is required")
 
 
 class RefreshRequest(BaseModel):
@@ -30,5 +30,8 @@ class TokenPayload(BaseModel):
     sub: str | None = None
     exp: int | None = None
     type: str | None = None
+
+
+
 
 

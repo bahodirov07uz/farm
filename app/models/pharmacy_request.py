@@ -33,3 +33,13 @@ class PharmacyRegistrationRequest(TimestampMixin, Base):
     owner = relationship("User", back_populates="pharmacy_requests")
 
 
+
+
+
+
+
+
+
+
+
+
