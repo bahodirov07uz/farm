@@ -1,12 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, joinedload
 from typing import Optional, List
 
 from app.models.orders import Order, OrderItem, OrderStatus
-from app.models import Drug
-from app.models import Inventory
-from app.models import Branch
+from app.models import Drug, Inventory, Branch
 
 
 class OrderRepository:
@@ -82,6 +80,29 @@ class OrderRepository:
             query = query.where(Order.branch_id == branch_id)
         if user_id:
             query = query.where(Order.user_id == user_id)
+        
+        query = query.offset(skip).limit(limit).order_by(Order.created_at.desc())
+        
+        result = await self.db.execute(query)
+        return list(result.scalars().all())
+
+    async def get_orders_by_pharmacy(
+        self,
+        pharmacy_id: int,
+        skip: int = 0,
+        limit: int = 100,
+        status: Optional[OrderStatus] = None
+    ) -> List[Order]:
+        """Get orders for all branches under a pharmacy"""
+        query = (
+            select(Order)
+            .join(Branch, Order.branch_id == Branch.id)
+            .options(selectinload(Order.items))
+            .where(Branch.pharmacy_id == pharmacy_id)
+        )
+        
+        if status:
+            query = query.where(Order.status == status)
         
         query = query.offset(skip).limit(limit).order_by(Order.created_at.desc())
         
